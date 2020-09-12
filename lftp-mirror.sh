@@ -7,6 +7,7 @@ PGID=${PGID}\\n\
 HOST=${HOST}\\n\
 PORT=${PORT}\\n\
 USERNAME=${USERNAME}\\n\
+PASSWORD=${PASSWORD}\\n\
 REMOTE_DIR=${REMOTE_DIR}\\n\
 FINISHED_DIR=${FINISHED_DIR}\\n\
 LFTP_PARTS=${LFTP_PARTS}\\n\
@@ -29,11 +30,10 @@ do
 	# LFTP with specified segment & parallel
 	echo "[$(date '+%H:%M:%S')] Checking ${REMOTE_DIR} for files....."
 	
-	lftp -u $USERNAME, sftp://$HOST -p $PORT <<-EOF
+	lftp -u $USERNAME,$PASSWORD sftp://$HOST -p $PORT <<-EOF
         set ssl:verify-certificate no
         set sftp:auto-confirm yes
-        set sftp:connect-program "ssh -a -x -i /config/ssh/id_rsa"
-	    mirror -c --no-empty-dirs --Remove-source-files --Remove-source-dirs --use-pget-n=$LFTP_PARTS -P$LFTP_FILES $REMOTE_DIR /config/.download
+	mirror -c --no-empty-dirs --Remove-source-files --Remove-source-dirs --use-pget-n=$LFTP_PARTS -P$LFTP_FILES $REMOTE_DIR /config/.download
 	quit
 	EOF
 
